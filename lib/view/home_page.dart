@@ -54,80 +54,57 @@ class HomePage extends ConsumerWidget {
                   Center(
                     child: Container(
                       width: MediaQuery.of(context).size.width * .8,
-                      height: MediaQuery.of(context).size.width * .8,
+                      height: (MediaQuery.of(context).size.width * .8)/2,
                       decoration: BoxDecoration(
-                          color: Colors.white.withOpacity(.8),
-                          borderRadius: BorderRadius.circular(15)),
+                        color: selectedTesis.available!
+                            ? Colors.green.shade200
+                            : Colors.grey.shade300,
+                        borderRadius: BorderRadius.circular(15),
+                      ),
                       child: Column(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: [
-                          Icon(
-                            Icons.charging_station,
-                            color: Colors.grey.withOpacity(.5),
-                            size: 50,
-                          ),
                           Row(
                             mainAxisSize: MainAxisSize.min,
                             children: [
-                              const Text("Tesis Adı: "),
-                              Text(selectedTesis.tesisAdi!),
+                              Icon(
+                                Icons.charging_station,
+                                color: Colors.grey.withOpacity(.5),
+                                size: 50,
+                              ),
+                              Flexible(
+                                child: Text(
+                                    '${selectedTesis.tesisAdi!}\n${selectedTesis.tesisAdres!} \n${selectedTesis.tesisIl!}/${selectedTesis.tesisIlce!}'),
+                              ),
                             ],
                           ),
                           Row(
-                            mainAxisSize: MainAxisSize.min,
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                             children: [
-                              const Text("Tesis türü: "),
-                              Text(selectedTesis.markerType!),
-                            ],
-                          ),
-                          Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              const Text("Tesis is available: "),
-                              if ((selectedTesis.available ?? false))
-                                const Icon(Icons.check)
-                              else
-                                const Icon(Icons.close)
-                            ],
-                          ),
-                          Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              const Text("Tesis is public: "),
-                              if ((selectedTesis.public ?? false))
-                                const Icon(Icons.check)
-                              else
-                                const Icon(Icons.close),
-                            ],
-                          ),
-                          Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              const Text("Adres: "),
-                              Text(selectedTesis.tesisAdres!),
-                            ],
-                          ),
-                          Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              const Text("Tesis ili: "),
-                              Text(selectedTesis.tesisIl!),
-                            ],
-                          ),
-                          Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              const Text("Tesis ilçesi: "),
-                              Text(selectedTesis.tesisIlce!),
-                            ],
-                          ),
-                          Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              const Text("Tesis türü: "),
-                              if ((selectedTesis.karayollariIcindeMi ?? false))
-                                const Icon(Icons.check)
-                              else
-                                const Icon(Icons.close),
+                              if(selectedTesis.markerType != null)
+                              Container(
+                                padding: const EdgeInsets.all(10.0),
+                                decoration: BoxDecoration(
+                                    color: Colors.white,
+                                    borderRadius: BorderRadius.circular(5)),
+                                child: Text(selectedTesis.markerType!),
+                              ),
+                              if(selectedTesis.public!)
+                              Container(
+                                padding: const EdgeInsets.all(5.0),
+                                decoration: BoxDecoration(
+                                    color: Colors.white,
+                                    borderRadius: BorderRadius.circular(5)),
+                                child: const Icon(Icons.public),
+                              ),
+                              if(selectedTesis.karayollariIcindeMi!)
+                              Container(
+                                padding: const EdgeInsets.all(5.0),
+                                decoration: BoxDecoration(
+                                    color: Colors.white,
+                                    borderRadius: BorderRadius.circular(5)),
+                                child: const Icon(Icons.add_road),
+                              ),
                             ],
                           ),
                         ],
