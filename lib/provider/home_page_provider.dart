@@ -10,11 +10,31 @@ final tesisListProvider = FutureProvider<List<Tesis>>((ref) async {
 
 final markersProvider = FutureProvider<List<Marker>>((ref) async {
   final tesisList = await ref.read(tesisListProvider.future);
-  final markers = tesisList.map((e) => Marker(markerId: MarkerId(e.tesisId!))).toList();
+  final markers = tesisList
+      .map(
+        (e) => Marker(
+          markerId: MarkerId(
+            e.tesisId!,
+          ),
+          onTap: (){
+            ref.read(showDetailsProvider.notifier).state = true;
+            ref.read(selectedTesisProvider.notifier).state = e;
+          },
+          position: LatLng(
+            double.parse(e.tesisLokasyonLat!),
+            double.parse(e.tesisLokasyonLong!),
+          ),
+        ),
+      )
+      .toList();
   return markers;
 });
+
+final selectedTesisProvider = StateProvider<Tesis?>((ref) {
+  return;
+});
+
 
 final showDetailsProvider = StateProvider<bool>((ref) {
   return false;
 });
-

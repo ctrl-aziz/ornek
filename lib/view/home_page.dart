@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:ornek/provider/home_page_provider.dart';
 
+//AIzaSyC2_fyPnGtqL1VJbqGXPbxDXYW8SdZGTkU
 class HomePage extends ConsumerWidget {
   const HomePage({Key? key}) : super(key: key);
 
@@ -14,33 +15,135 @@ class HomePage extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final markers = ref.watch(markersProvider);
-    return Scaffold(
-      appBar: AppBar(),
-      body: markers.when(
-        data: (markers){
-          return GoogleMap(
-            onTap: (d) {
-              ref.read(showDetailsProvider.notifier).state = true;
-            },
-            initialCameraPosition: const CameraPosition(target: LatLng(25, 25), zoom: 15),
-            mapType: MapType.normal,
-            onMapCreated: _onMapCreated,
-            markers: markers.toSet(),
-            myLocationEnabled: true,
-            myLocationButtonEnabled: true,
-            zoomGesturesEnabled: true,
-            zoomControlsEnabled: false,
-            scrollGesturesEnabled: true,
-            rotateGesturesEnabled: true,
-            onCameraMove: (cameraPosition) {
-
-            },
-          );
-        },
-        error: (e, s){
-          return const Text('Error');
-        },
-        loading: () => const Center(child: CircularProgressIndicator()),
+    final selectedTesis = ref.watch(selectedTesisProvider);
+    return WillPopScope(
+      onWillPop: () async {
+        if (selectedTesis != null) {
+          ref.read(selectedTesisProvider.notifier).state = null;
+          return false;
+        } else {
+          return true;
+        }
+      },
+      child: Scaffold(
+        body: markers.when(
+          data: (markers) {
+            return Stack(
+              children: [
+                GoogleMap(
+                  onTap: (d) {
+                    ref.read(selectedTesisProvider.notifier).state = null;
+                    print("on Map Tap");
+                  },
+                  // 37.1793537,33.2600816,13z
+                  // 37.1785331,33.227466,13z
+                  initialCameraPosition: const CameraPosition(
+                      target: LatLng(37.1793537, 33.22), zoom: 13),
+                  mapType: MapType.normal,
+                  onMapCreated: _onMapCreated,
+                  markers: markers.toSet(),
+                  myLocationEnabled: true,
+                  myLocationButtonEnabled: true,
+                  zoomGesturesEnabled: true,
+                  zoomControlsEnabled: false,
+                  scrollGesturesEnabled: true,
+                  rotateGesturesEnabled: true,
+                  onCameraMove: (cameraPosition) {},
+                ),
+                if (selectedTesis != null)
+                  Center(
+                    child: Container(
+                      width: MediaQuery.of(context).size.width * .8,
+                      height: MediaQuery.of(context).size.width * .8,
+                      decoration: BoxDecoration(
+                          color: Colors.white.withOpacity(.8),
+                          borderRadius: BorderRadius.circular(15)),
+                      child: Column(
+                        children: [
+                          Icon(
+                            Icons.charging_station,
+                            color: Colors.grey.withOpacity(.5),
+                            size: 50,
+                          ),
+                          Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              const Text("Tesis Adı: "),
+                              Text(selectedTesis.tesisAdi!),
+                            ],
+                          ),
+                          Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              const Text("Tesis türü: "),
+                              Text(selectedTesis.markerType!),
+                            ],
+                          ),
+                          Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              const Text("Tesis is available: "),
+                              if ((selectedTesis.available ?? false))
+                                const Icon(Icons.check)
+                              else
+                                const Icon(Icons.close)
+                            ],
+                          ),
+                          Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              const Text("Tesis is public: "),
+                              if ((selectedTesis.public ?? false))
+                                const Icon(Icons.check)
+                              else
+                                const Icon(Icons.close),
+                            ],
+                          ),
+                          Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              const Text("Adres: "),
+                              Text(selectedTesis.tesisAdres!),
+                            ],
+                          ),
+                          Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              const Text("Tesis ili: "),
+                              Text(selectedTesis.tesisIl!),
+                            ],
+                          ),
+                          Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              const Text("Tesis ilçesi: "),
+                              Text(selectedTesis.tesisIlce!),
+                            ],
+                          ),
+                          Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              const Text("Tesis türü: "),
+                              if ((selectedTesis.karayollariIcindeMi ?? false))
+                                const Icon(Icons.check)
+                              else
+                                const Icon(Icons.close),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                  )
+              ],
+            );
+          },
+          error: (e, s) {
+            print(e);
+            print(s);
+            return Text('Error: $e s: $s');
+          },
+          loading: () => const Center(child: CircularProgressIndicator()),
+        ),
       ),
     );
   }
